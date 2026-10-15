@@ -1,0 +1,4045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediCheck — Affordable Medicine Availability Finder</title>
+  <meta name="description" content="Check medicine availability, compare pharmacy prices, and find nearby medical stores with reported stock data.">
+
+  <style>
+    /* ==========================================================================
+       MEDICHECK DESIGN SYSTEM
+       Theme: Trustworthy Healthcare, Modern Blue & White Palette
+       Zero external dependencies - 100% Offline Capable
+       ========================================================================== */
+
+    :root {
+      /* Brand Color Palette */
+      --primary: #2563eb;          /* Royal Blue */
+      --primary-hover: #1d4ed8;    /* Deep Royal Blue */
+      --primary-light: #eff6ff;    /* Soft Tint */
+      --primary-focus: rgba(37, 99, 235, 0.25);
+
+      --navy-900: #0f2744;         /* Headings & Brand Text */
+      --navy-800: #1e3a8a;
+      --navy-700: #1e293b;
+
+      /* Stock Status Badges */
+      --stock-in: #16a34a;         /* Emerald Green */
+      --stock-in-bg: #dcfce7;
+      --stock-in-border: #86efac;
+
+      --stock-low: #d97706;        /* Amber / Orange */
+      --stock-low-bg: #fef3c7;
+      --stock-low-border: #fcd34d;
+
+      --stock-out: #dc2626;        /* Crimson Red */
+      --stock-out-bg: #fee2e2;
+      --stock-out-border: #fca5a5;
+
+      /* Neutral Surfaces & Borders */
+      --bg-body: #f8fafc;
+      --surface-white: #ffffff;
+      --border-subtle: #e2e8f0;
+      --border-medium: #cbd5e1;
+
+      /* Typography Grays */
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --text-light: #94a3b8;
+
+      /* Shadows & Radii */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+
+      --shadow-sm: 0 1px 3px rgba(15, 39, 68, 0.05);
+      --shadow-md: 0 4px 12px -2px rgba(15, 39, 68, 0.08), 0 2px 6px -2px rgba(15, 39, 68, 0.04);
+      --shadow-lg: 0 12px 28px -6px rgba(15, 39, 68, 0.12), 0 4px 12px -3px rgba(15, 39, 68, 0.06);
+
+      --transition-fast: 0.18s ease;
+      --transition-normal: 0.26s ease;
+    }
+
+    /* CSS Reset & Global Layout */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 16px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text-main);
+      background-color: var(--bg-body);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Accessibility Focus Outline */
+    :focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    a:hover {
+      color: var(--primary-hover);
+    }
+
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    input, select, textarea {
+      font-family: inherit;
+      font-size: 0.95rem;
+    }
+
+    /* Container Utility */
+    .container {
+      width: 100%;
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 0 1.25rem;
+    }
+
+    /* Typography Utilities */
+    .section-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--primary);
+      background: var(--primary-light);
+      padding: 0.3rem 0.85rem;
+      border-radius: var(--radius-full);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto;
+    }
+
+    /* Primary & Outline Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.35rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      min-height: 44px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+    }
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border-medium);
+      background-color: var(--surface-white);
+      color: var(--navy-900);
+    }
+    .btn-outline:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    .btn-sm {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.82rem;
+      min-height: 36px;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      line-height: 1;
+    }
+
+    .badge-in {
+      background: var(--stock-in-bg);
+      color: var(--stock-in);
+      border: 1px solid var(--stock-in-border);
+    }
+
+    .badge-low {
+      background: var(--stock-low-bg);
+      color: var(--stock-low);
+      border: 1px solid var(--stock-low-border);
+    }
+
+    .badge-out {
+      background: var(--stock-out-bg);
+      color: var(--stock-out);
+      border: 1px solid var(--stock-out-border);
+    }
+
+    .badge-pill-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ==========================================================================
+       TOP ANNOUNCEMENT BAR (HACKATHON & SAFETY NOTICE)
+       ========================================================================== */
+    .top-banner {
+      background: linear-gradient(90deg, #1e3a8a, #2563eb);
+      color: #ffffff;
+      padding: 0.45rem 1rem;
+      font-size: 0.8rem;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+    .top-banner strong {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    /* ==========================================================================
+       NAVIGATION BAR
+       ========================================================================== */
+    .navbar {
+      background-color: var(--surface-white);
+      border-bottom: 1px solid var(--border-subtle);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 70px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+    }
+
+    .logo-icon-svg {
+      width: 38px;
+      height: 38px;
+      flex-shrink: 0;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+
+    .brand-title span {
+      color: var(--primary);
+    }
+
+    .brand-tagline {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--stock-in);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.6rem;
+      list-style: none;
+    }
+
+    .nav-link {
+      font-size: 0.92rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      transition: color var(--transition-fast);
+      position: relative;
+      padding: 0.3rem 0;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--primary);
+    }
+
+    .nav-link.active::after {
+      content: "";
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* Mobile Menu Toggle */
+    .hamburger-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.45rem;
+      color: var(--navy-900);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       HERO SECTION
+       ========================================================================== */
+    .hero-section {
+      background: linear-gradient(180deg, #f0f7ff 0%, #ffffff 100%);
+      padding: 3.5rem 0 3rem;
+      border-bottom: 1px solid var(--border-subtle);
+      position: relative;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .hero-badge-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--surface-white);
+      border: 1px solid #bfdbfe;
+      padding: 0.35rem 0.9rem;
+      border-radius: var(--radius-full);
+      box-shadow: 0 2px 5px rgba(37, 99, 235, 0.06);
+      margin-bottom: 1rem;
+    }
+
+    .hero-badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--stock-in);
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    }
+
+    .hero-badge-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--navy-800);
+    }
+
+    .hero-heading {
+      font-size: 2.65rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin-bottom: 0.9rem;
+    }
+
+    .hero-heading span {
+      color: var(--primary);
+    }
+
+    .hero-subtext {
+      font-size: 1.08rem;
+      color: var(--text-muted);
+      margin-bottom: 1.8rem;
+      max-width: 540px;
+    }
+
+    /* Search Box Container */
+    .hero-search-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1rem;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    .search-inputs-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr auto;
+      gap: 0.65rem;
+    }
+
+    .input-field-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-field-wrap svg {
+      position: absolute;
+      left: 12px;
+      width: 18px;
+      height: 18px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 0.85rem 0.75rem 2.35rem;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      color: var(--navy-900);
+      background: #fafbfe;
+      transition: all var(--transition-fast);
+    }
+
+    .search-input:focus {
+      background: #ffffff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-focus);
+    }
+
+    /* Autocomplete Suggestions Box */
+    .autocomplete-dropdown {
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 0;
+      right: 0;
+      background: var(--surface-white);
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 50;
+      max-height: 250px;
+      overflow-y: auto;
+      display: none;
+    }
+
+    .autocomplete-item {
+      padding: 0.65rem 1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 0.88rem;
+    }
+
+    .autocomplete-item:hover, .autocomplete-item.selected {
+      background-color: var(--primary-light);
+    }
+
+    .autocomplete-item-title {
+      font-weight: 600;
+      color: var(--navy-900);
+    }
+
+    .autocomplete-item-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Popular Tags Chips */
+    .popular-tags-wrap {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .popular-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .chip-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-full);
+      padding: 0.3rem 0.75rem;
+      font-size: 0.78rem;
+      color: var(--navy-800);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+
+    .chip-btn:hover {
+      background: var(--primary-light);
+      border-color: #93c5fd;
+      color: var(--primary);
+    }
+
+    /* Hero SVG Graphic */
+    .hero-art-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .hero-svg-illustration {
+      width: 100%;
+      max-width: 440px;
+      height: auto;
+      filter: drop-shadow(0 10px 15px rgba(37, 99, 235, 0.08));
+    }
+
+    /* ==========================================================================
+       QUICK ACTIONS SECTION
+       ========================================================================== */
+    .quick-actions-section {
+      padding: 2rem 0;
+      background: var(--surface-white);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .quick-actions-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.25rem;
+    }
+
+    .action-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .action-card:hover {
+      background: var(--surface-white);
+      border-color: #93c5fd;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .action-icon-circle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .action-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .action-card-desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* ==========================================================================
+       MAIN AVAILABILITY & FILTER SECTION
+       ========================================================================== */
+    .results-main-section {
+      padding: 3rem 0;
+    }
+
+    .results-layout-grid {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 1.75rem;
+      align-items: start;
+    }
+
+    /* Filter Sidebar */
+    .filter-sidebar {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 90px;
+    }
+
+    .filter-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .filter-heading {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .filter-reset-link {
+      font-size: 0.78rem;
+      color: var(--primary);
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .filter-reset-link:hover {
+      text-decoration: underline;
+    }
+
+    .filter-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .filter-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--navy-800);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .filter-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-main);
+      cursor: pointer;
+      margin-bottom: 0.4rem;
+      user-select: none;
+    }
+
+    .filter-checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
+    .filter-select {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      background-color: #fafbfe;
+      color: var(--navy-900);
+      font-size: 0.85rem;
+    }
+
+    .price-range-inputs {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .price-input {
+      width: 100%;
+      padding: 0.45rem 0.55rem;
+      font-size: 0.82rem;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      color: var(--navy-900);
+    }
+
+    .price-separator {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Mobile Filter Toggle Button */
+    .mobile-filter-bar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Results Header & Sorting Bar */
+    .results-control-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .results-count-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .results-count-title span {
+      color: var(--primary);
+    }
+
+    .sorting-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .sorting-label {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .sort-select {
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      background-color: #fafbfe;
+      color: var(--navy-900);
+      cursor: pointer;
+    }
+
+    /* Result Pharmacy Cards List */
+    .results-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+    }
+
+    .pharmacy-result-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.35rem;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .pharmacy-result-card:hover {
+      border-color: #93c5fd;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .card-top-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .card-pharmacy-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .card-pharmacy-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .card-location-meta {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .card-location-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .card-price-badge-block {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.25rem;
+    }
+
+    .card-price-val {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      line-height: 1;
+    }
+
+    .card-price-pack {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+
+    /* Medicine Details Sub-Bar */
+    .card-med-subbar {
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .card-med-desc {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .med-main-name {
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .med-brand-alias {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .card-stock-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .reported-qty {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Card Bottom Action Bar */
+    .card-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      padding-top: 0.85rem;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .card-timestamp-text {
+      font-size: 0.76rem;
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .card-actions-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Empty Results State */
+    .empty-state-card {
+      background: var(--surface-white);
+      border: 1px dashed var(--border-medium);
+      border-radius: var(--radius-lg);
+      padding: 3rem 1.5rem;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .empty-state-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .empty-state-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .empty-state-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-width: 440px;
+    }
+
+    /* ==========================================================================
+       PRICE COMPARISON SECTION
+       ========================================================================== */
+    .compare-section {
+      padding: 3.5rem 0;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+      border-top: 1px solid var(--border-subtle);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .compare-card-container {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .compare-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .compare-select-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .compare-select-label {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      white-space: nowrap;
+    }
+
+    .compare-select {
+      flex: 1;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.92rem;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-md);
+      background: #fafbfe;
+      color: var(--navy-900);
+      font-weight: 600;
+    }
+
+    /* Savings Callout Box */
+    .savings-callout-box {
+      background: #ecfdf5;
+      border: 1px solid var(--stock-in-border);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .savings-callout-icon {
+      color: var(--stock-in);
+      flex-shrink: 0;
+    }
+
+    .savings-callout-text {
+      font-size: 0.88rem;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    /* Comparison Table / Cards */
+    .compare-table-wrapper {
+      overflow-x: auto;
+      margin-bottom: 1rem;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .compare-table th {
+      background: #f8fafc;
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      color: var(--navy-800);
+      border-bottom: 2px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+
+    .compare-table td {
+      padding: 0.95rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      vertical-align: middle;
+    }
+
+    .compare-table tr:hover td {
+      background-color: #fafbfe;
+    }
+
+    .compare-table tr.is-cheapest td {
+      background-color: #f0fdf4;
+    }
+
+    .lowest-price-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: #16a34a;
+      color: #ffffff;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-left: 0.4rem;
+    }
+
+    .compare-notice-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      background: #f8fafc;
+      padding: 0.75rem 1rem;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--primary);
+    }
+
+    /* ==========================================================================
+       RESTOCK ALERTS SECTION
+       ========================================================================== */
+    .alerts-section {
+      padding: 3.5rem 0;
+      background: var(--surface-white);
+    }
+
+    .alerts-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 2.25rem;
+      align-items: start;
+    }
+
+    .alert-form-card {
+      background: #fafbfe;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .alert-form-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 0.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .alert-form-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy-800);
+      margin-bottom: 0.35rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.65rem 0.8rem;
+      border: 1px solid var(--border-medium);
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      color: var(--navy-900);
+      background: var(--surface-white);
+    }
+    .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-focus);
+    }
+
+    .form-help-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Saved Alerts List Card */
+    .saved-alerts-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .saved-alerts-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .saved-alerts-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .alerts-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .saved-alert-item {
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 0.9rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      transition: border-color var(--transition-fast);
+    }
+
+    .saved-alert-item:hover {
+      border-color: #93c5fd;
+    }
+
+    .alert-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+
+    .alert-item-med {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .alert-item-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .btn-delete-alert {
+      color: var(--stock-out);
+      padding: 0.35rem 0.65rem;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 1px solid var(--stock-out-border);
+      background: var(--stock-out-bg);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .btn-delete-alert:hover {
+      background: #fecaca;
+    }
+
+    /* ==========================================================================
+       HOW IT WORKS & WHY CHOOSE US
+       ========================================================================== */
+    .how-it-works-section {
+      padding: 3.5rem 0;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.75rem;
+    }
+
+    .step-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .step-number-pill {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.25rem;
+      box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+    }
+
+    .step-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* Why Choose Section */
+    .why-section {
+      padding: 3.5rem 0;
+      background: var(--surface-white);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+
+    .feature-card {
+      background: #fafbfe;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem 1.25rem;
+      transition: all var(--transition-fast);
+    }
+
+    .feature-card:hover {
+      background: #ffffff;
+      border-color: #93c5fd;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon-box {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background: var(--primary-light);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 0.4rem;
+    }
+
+    .feature-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ==========================================================================
+       ABOUT & HACKATHON SECTION
+       ========================================================================== */
+    .about-section {
+      padding: 3.5rem 0;
+      background: linear-gradient(180deg, #f8fafc 0%, #eff6ff 100%);
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .about-card {
+      background: var(--surface-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 2.25rem;
+      box-shadow: var(--shadow-md);
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 2rem;
+      align-items: center;
+    }
+
+    .about-text h3 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      margin-bottom: 0.85rem;
+    }
+
+    .about-text p {
+      font-size: 0.94rem;
+      color: var(--text-main);
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .student-badge-box {
+      background: #f1f5f9;
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      border-left: 4px solid var(--primary);
+    }
+
+    .student-badge-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--navy-900);
+      margin-bottom: 0.35rem;
+    }
+
+    .student-badge-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+
+    /* ==========================================================================
+       FOOTER
+       ========================================================================== */
+    .site-footer {
+      background-color: var(--navy-900);
+      color: #e2e8f0;
+      padding: 3.5rem 0 1.5rem;
+      border-top: 1px solid #1e293b;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 2.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .footer-brand-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 0.5rem;
+    }
+
+    .footer-brand-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-bottom: 1.25rem;
+      max-width: 320px;
+    }
+
+    .footer-heading {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 1rem;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .footer-link {
+      font-size: 0.84rem;
+      color: #94a3b8;
+      transition: color var(--transition-fast);
+    }
+
+    .footer-link:hover {
+      color: #ffffff;
+    }
+
+    /* Medical Disclaimer Banner in Footer */
+    .footer-disclaimer-box {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.35);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-disclaimer-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #fca5a5;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .footer-disclaimer-text {
+      font-size: 0.82rem;
+      color: #cbd5e1;
+      line-height: 1.55;
+    }
+
+    .footer-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #1e293b;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+
+    /* ==========================================================================
+       MODALS (PHARMACY DETAILS, LOGIN/SIGNUP, DEMO NOTICE)
+       ========================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all var(--transition-fast);
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-window {
+      background: var(--surface-white);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 580px;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(20px);
+      transition: transform var(--transition-normal);
+      overflow: hidden;
+    }
+
+    .modal-backdrop.open .modal-window {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--navy-900);
+    }
+
+    .modal-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .modal-close-btn:hover {
+      background: #f1f5f9;
+      color: var(--navy-900);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-subtle);
+      background: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Pharmacy Detail Specifics */
+    .pharmacy-detail-hero {
+      background: #f0f7ff;
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .pharmacy-detail-name {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--navy-900);
+      margin-bottom: 0.25rem;
+    }
+
+    .pharmacy-detail-row {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .detail-inventory-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .detail-inventory-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.6rem 0.8rem;
+      background: #f8fafc;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+    }
+
+    /* Demo Login/Signup Tabs */
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-tab-btn {
+      flex: 1;
+      padding: 0.75rem;
+      text-align: center;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+    }
+
+    .auth-tab-btn.active {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+
+    /* Toast Notifications */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 2000;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .toast-message {
+      background: var(--navy-900);
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 500;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      pointer-events: auto;
+      animation: slideInToast 0.3s ease forwards;
+    }
+
+    @keyframes slideInToast {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ==========================================================================
+       RESPONSIVE BREAKPOINTS
+       Mobile, Tablet & Desktop Adjustments
+       ========================================================================== */
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+      }
+      .hero-subtext {
+        margin: 0 auto 1.8rem;
+      }
+      .hero-badge-wrap {
+        margin: 0 auto 1rem;
+      }
+      .popular-tags-wrap {
+        justify-content: center;
+      }
+      .quick-actions-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .results-layout-grid {
+        grid-template-columns: 1fr;
+      }
+      .filter-sidebar {
+        display: none; /* Managed by toggle on mobile */
+      }
+      .filter-sidebar.mobile-open {
+        display: block;
+        position: static;
+        margin-bottom: 1.5rem;
+      }
+      .mobile-filter-bar {
+        display: flex;
+      }
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .steps-grid {
+        grid-template-columns: 1fr;
+      }
+      .alerts-grid {
+        grid-template-columns: 1fr;
+      }
+      .about-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-heading {
+        font-size: 2rem;
+      }
+      .search-inputs-grid {
+        grid-template-columns: 1fr;
+      }
+      .hamburger-btn {
+        display: block;
+      }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 70px;
+        left: 0;
+        right: 0;
+        background: var(--surface-white);
+        flex-direction: column;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-lg);
+        border-bottom: 1px solid var(--border-subtle);
+        gap: 1rem;
+      }
+      .nav-links.mobile-nav-active {
+        display: flex;
+      }
+      .nav-actions {
+        display: none;
+      }
+      .quick-actions-grid {
+        grid-template-columns: 1fr;
+      }
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .card-top-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .card-price-badge-block {
+        align-items: flex-start;
+      }
+      .card-bottom-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .card-actions-group {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .card-actions-group .btn {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Announcement Bar (Educational / Hackathon Notice) -->
+  <div class="top-banner">
+    <span>💡 <strong>MediCheck Demo</strong> — B.Tech 1st Year Hackathon Project. Showing mock data for demonstration purposes only.</span>
+  </div>
+
+  <!-- Header / Navigation Bar -->
+  <header class="navbar">
+    <div class="container nav-container">
+      <!-- Logo: Capsule with Green Medical Cross -->
+      <a href="#home" class="brand-logo" aria-label="MediCheck Home">
+        <svg class="logo-icon-svg" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Capsule Left / Top Half (Blue) -->
+          <rect x="8" y="10" width="32" height="28" rx="14" fill="#2563eb" />
+          <!-- Capsule White / Green Divider -->
+          <path d="M24 10C31.732 10 38 16.268 38 24C38 31.732 31.732 38 24 38V10Z" fill="#ffffff" />
+          <!-- Medical Cross in Center -->
+          <rect x="22" y="18" width="4" height="12" rx="2" fill="#16a34a" />
+          <rect x="18" y="22" width="12" height="4" rx="2" fill="#16a34a" />
+        </svg>
+        <div class="brand-text">
+          <div class="brand-title">Medi<span>Check</span></div>
+          <div class="brand-tagline">Find. Compare. Save.</div>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links" id="mainNavLinks">
+          <li><a href="#home" class="nav-link active">Home</a></li>
+          <li><a href="#availability" class="nav-link">Check Availability</a></li>
+          <li><a href="#availability" class="nav-link">Nearby Pharmacies</a></li>
+          <li><a href="#compare" class="nav-link">Price Compare</a></li>
+          <li><a href="#alerts" class="nav-link">Restock Alerts</a></li>
+          <li><a href="#about" class="nav-link">About</a></li>
+        </ul>
+      </nav>
+
+      <!-- Auth Actions -->
+      <div class="nav-actions">
+        <button class="btn btn-outline btn-sm" onclick="openAuthModal('login')">Log In</button>
+        <button class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">Sign Up</button>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button class="hamburger-btn" id="mobileMenuToggle" aria-label="Toggle navigation menu" onclick="toggleMobileNav()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==========================================================================
+         HERO SECTION
+         ========================================================================== -->
+    <section class="hero-section" id="home">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <!-- Information Badge -->
+          <div class="hero-badge-wrap">
+            <span class="hero-badge-dot"></span>
+            <span class="hero-badge-text">Check reported stock near you</span>
+          </div>
+
+          <!-- Main Heading -->
+          <h1 class="hero-heading">Find Affordable Medicines <span>Near You</span></h1>
+
+          <!-- Supporting Text -->
+          <p class="hero-subtext">
+            Check medicine availability, compare pharmacy prices, and find nearby stores — all in one place.
+          </p>
+
+          <!-- Search Card -->
+          <div class="hero-search-card">
+            <form id="heroSearchForm" onsubmit="handleHeroSearch(event)">
+              <div class="search-inputs-grid">
+                <!-- Medicine Search Input -->
+                <div class="input-field-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  <input
+                    type="text"
+                    id="medicineSearchInput"
+                    class="search-input"
+                    placeholder="Search Paracetamol, Cetirizine, ORS..."
+                    autocomplete="off"
+                    aria-label="Search medicine name, brand, or category"
+                  />
+                  <!-- Suggestions Dropdown -->
+                  <div class="autocomplete-dropdown" id="searchSuggestionsList" role="listbox"></div>
+                </div>
+
+                <!-- Location Input -->
+                <div class="input-field-wrap">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <input
+                    type="text"
+                    id="locationSearchInput"
+                    class="search-input"
+                    placeholder="City or locality (e.g. Indiranagar)"
+                    aria-label="Enter city or locality"
+                  />
+                </div>
+
+                <!-- Search Submit Button -->
+                <button type="submit" class="btn btn-primary" id="searchSubmitBtn">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  Search
+                </button>
+              </div>
+            </form>
+
+            <!-- Popular Search Suggestions Chips -->
+            <div class="popular-tags-wrap">
+              <span class="popular-label">Popular searches:</span>
+              <button class="chip-btn" onclick="quickSearch('Paracetamol 500 mg')">Paracetamol 500 mg</button>
+              <button class="chip-btn" onclick="quickSearch('Cetirizine 10 mg')">Cetirizine 10 mg</button>
+              <button class="chip-btn" onclick="quickSearch('ORS')">ORS Sachets</button>
+              <button class="chip-btn" onclick="quickSearch('Vitamin C')">Vitamin C</button>
+              <button class="chip-btn" onclick="quickSearch('Ibuprofen 200 mg')">Ibuprofen 200 mg</button>
+              <button class="chip-btn" onclick="quickSearch('Antacid')">Antacid</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inline Healthcare SVG Illustration -->
+        <div class="hero-art-wrapper">
+          <svg class="hero-svg-illustration" viewBox="0 0 460 380" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Healthcare pharmacy illustration">
+            <!-- Background Soft Cloud Elements -->
+            <ellipse cx="230" cy="190" rx="200" ry="160" fill="#eff6ff" />
+            <circle cx="90" cy="80" r="35" fill="#e0f2fe" opacity="0.6" />
+            <circle cx="380" cy="280" r="45" fill="#e0f2fe" opacity="0.6" />
+
+            <!-- Medical Shield / Center Card -->
+            <rect x="130" y="50" width="200" height="260" rx="24" fill="#ffffff" stroke="#bfdbfe" stroke-width="3" filter="drop-shadow(0 15px 25px rgba(37,99,235,0.1))" />
+
+            <!-- Pharmacy Cross Roof Header -->
+            <path d="M130 74C130 60.7452 140.745 50 154 50H306C319.255 50 330 60.7452 330 74V95H130V74Z" fill="#2563eb" />
+            <text x="230" y="80" fill="#ffffff" font-size="14" font-weight="bold" text-anchor="middle" font-family="sans-serif">MEDICHECK CLINIC</text>
+
+            <!-- Big Medical Cross in Center -->
+            <circle cx="230" cy="165" r="46" fill="#f0fdf4" stroke="#86efac" stroke-width="2" />
+            <rect x="222" y="137" width="16" height="56" rx="8" fill="#16a34a" />
+            <rect x="202" y="157" width="56" height="16" rx="8" fill="#16a34a" />
+
+            <!-- Mini Stock Availability Pill Badges inside card -->
+            <rect x="155" y="235" width="150" height="30" rx="15" fill="#eff6ff" />
+            <circle cx="172" cy="250" r="6" fill="#16a34a" />
+            <text x="235" y="255" fill="#1e3a8a" font-size="11" font-weight="bold" text-anchor="middle" font-family="sans-serif">Stock Verified Live</text>
+
+            <rect x="165" y="275" width="130" height="22" rx="11" fill="#ecfdf5" />
+            <text x="230" y="290" fill="#065f46" font-size="10" font-weight="bold" text-anchor="middle" font-family="sans-serif">Best Price Guaranteed</text>
+
+            <!-- Floating Medicine Capsule on Left -->
+            <g transform="translate(45, 170) rotate(-25)">
+              <rect x="0" y="0" width="40" height="85" rx="20" fill="#2563eb" />
+              <path d="M0 42H40V65C40 76.0457 31.0457 85 20 85C8.9543 85 0 76.0457 0 65V42Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="2" />
+              <rect x="17" y="18" width="6" height="16" rx="2" fill="#ffffff" />
+              <rect x="12" y="23" width="16" height="6" rx="2" fill="#ffffff" />
+            </g>
+
+            <!-- Floating Syrup Bottle on Right -->
+            <g transform="translate(340, 130)">
+              <!-- Bottle Cap -->
+              <rect x="20" y="0" width="28" height="14" rx="4" fill="#64748b" />
+              <!-- Bottle Neck -->
+              <rect x="25" y="14" width="18" height="12" fill="#cbd5e1" />
+              <!-- Bottle Body -->
+              <rect x="6" y="26" width="56" height="96" rx="12" fill="#3b82f6" />
+              <!-- Label -->
+              <rect x="12" y="46" width="44" height="52" rx="6" fill="#ffffff" />
+              <rect x="29" y="56" width="10" height="32" rx="3" fill="#ef4444" />
+              <rect x="18" y="67" width="32" height="10" rx="3" fill="#ef4444" />
+            </g>
+
+            <!-- Location Pin Marker Pin Pointing to center -->
+            <g transform="translate(75, 270)">
+              <circle cx="20" cy="20" r="16" fill="#ef4444" />
+              <circle cx="20" cy="20" r="7" fill="#ffffff" />
+              <path d="M8 26L20 44L32 26Z" fill="#ef4444" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         QUICK ACTIONS SECTION
+         ========================================================================== */ -->
+    <section class="quick-actions-section">
+      <div class="container">
+        <div class="quick-actions-grid">
+          <!-- Action 1 -->
+          <div class="action-card" onclick="scrollToSection('availability')">
+            <div class="action-icon-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div class="action-card-title">Find Nearby Pharmacies</div>
+            <div class="action-card-desc">Locate open medical shops and check reported stock nearby.</div>
+          </div>
+
+          <!-- Action 2 -->
+          <div class="action-card" onclick="scrollToSection('compare')">
+            <div class="action-icon-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+            <div class="action-card-title">Compare Medicine Prices</div>
+            <div class="action-card-desc">Compare listed prices across stores to identify savings.</div>
+          </div>
+
+          <!-- Action 3 -->
+          <div class="action-card" onclick="scrollToSection('availability')">
+            <div class="action-icon-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div class="action-card-title">Check Availability</div>
+            <div class="action-card-desc">Filter by In Stock, Low Stock, or out-of-stock items.</div>
+          </div>
+
+          <!-- Action 4 -->
+          <div class="action-card" onclick="scrollToSection('alerts')">
+            <div class="action-icon-circle">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+            </div>
+            <div class="action-card-title">View Saved Alerts</div>
+            <div class="action-card-desc">Track hard-to-find medicines with browser reminders.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         MEDICINE AVAILABILITY & FILTER RESULTS SECTION
+         ========================================================================== -->
+    <section class="results-main-section" id="availability">
+      <div class="container">
+        
+        <!-- Mobile Filter Toggle Bar -->
+        <div class="mobile-filter-bar">
+          <span style="font-weight: 700; color: var(--navy-900);">Filter & Sort</span>
+          <button class="btn btn-outline btn-sm" onclick="toggleMobileFilters()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+            </svg>
+            Toggle Filters
+          </button>
+        </div>
+
+        <div class="results-layout-grid">
+          <!-- Desktop & Collapsible Mobile Filter Sidebar -->
+          <aside class="filter-sidebar" id="filterSidebar" aria-label="Filters">
+            <div class="filter-header-bar">
+              <div class="filter-heading">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                Filters
+              </div>
+              <button class="filter-reset-link" onclick="resetAllFilters()">Clear Filters</button>
+            </div>
+
+            <!-- Stock Status Checkboxes -->
+            <div class="filter-group">
+              <span class="filter-label">Stock Availability</span>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" id="filterInStock" checked onchange="applyFiltersAndRender()">
+                <span>In Stock</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" id="filterLowStock" checked onchange="applyFiltersAndRender()">
+                <span>Low Stock</span>
+              </label>
+              <label class="filter-checkbox-label">
+                <input type="checkbox" id="filterOutOfStock" checked onchange="applyFiltersAndRender()">
+                <span>Out of Stock</span>
+              </label>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="filter-group">
+              <span class="filter-label">Price Range (₹)</span>
+              <div class="price-range-inputs">
+                <input type="number" id="minPriceInput" class="price-input" placeholder="Min" min="0" oninput="applyFiltersAndRender()" />
+                <span class="price-separator">to</span>
+                <input type="number" id="maxPriceInput" class="price-input" placeholder="Max" min="0" oninput="applyFiltersAndRender()" />
+              </div>
+            </div>
+
+            <!-- Medicine Category Filter -->
+            <div class="filter-group">
+              <label class="filter-label" for="categoryFilterSelect">Medicine Category</label>
+              <select id="categoryFilterSelect" class="filter-select" onchange="applyFiltersAndRender()">
+                <option value="all">All Categories</option>
+                <option value="Fever & Pain Relief">Fever & Pain Relief</option>
+                <option value="Allergy & Cold">Allergy & Cold</option>
+                <option value="Rehydration & Digestion">Rehydration & Digestion</option>
+                <option value="Vitamins & Supplements">Vitamins & Supplements</option>
+                <option value="First Aid & Antiseptics">First Aid & Antiseptics</option>
+              </select>
+            </div>
+
+            <!-- Pharmacy Filter -->
+            <div class="filter-group">
+              <label class="filter-label" for="pharmacyFilterSelect">Pharmacy Store</label>
+              <select id="pharmacyFilterSelect" class="filter-select" onchange="applyFiltersAndRender()">
+                <option value="all">All Pharmacies</option>
+                <!-- Populated dynamically via JS -->
+              </select>
+            </div>
+
+            <!-- Locality Filter -->
+            <div class="filter-group">
+              <label class="filter-label" for="localityFilterSelect">Locality</label>
+              <select id="localityFilterSelect" class="filter-select" onchange="applyFiltersAndRender()">
+                <option value="all">All Localities</option>
+                <!-- Populated dynamically via JS -->
+              </select>
+            </div>
+
+            <!-- Distance Filter (Sample data) -->
+            <div class="filter-group">
+              <label class="filter-label" for="distanceFilterSelect">Max Distance (Sample)</label>
+              <select id="distanceFilterSelect" class="filter-select" onchange="applyFiltersAndRender()">
+                <option value="all">Any Distance</option>
+                <option value="2">Within 2 km</option>
+                <option value="4">Within 4 km</option>
+                <option value="6">Within 6 km</option>
+                <option value="10">Within 10 km</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary btn-block btn-sm" onclick="applyFiltersAndRender()">Apply Filters</button>
+          </aside>
+
+          <!-- Results Display Area -->
+          <div class="results-content-area">
+            <!-- Top Controls & Sort Bar -->
+            <div class="results-control-bar">
+              <div class="results-count-title" id="resultsHeadingText">
+                Pharmacies listing medicines
+              </div>
+
+              <!-- Sorting Dropdown -->
+              <div class="sorting-wrap">
+                <label for="sortBySelect" class="sorting-label">Sort by:</label>
+                <select id="sortBySelect" class="sort-select" onchange="applyFiltersAndRender()">
+                  <option value="price-asc">Lowest Price First</option>
+                  <option value="price-desc">Highest Price First</option>
+                  <option value="dist-asc">Nearest Pharmacy (Sample)</option>
+                  <option value="updated">Recently Updated</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Results Card Container -->
+            <div class="results-cards-list" id="resultsCardsList">
+              <!-- Dynamically populated via JS render function -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         PRICE COMPARISON SECTION
+         ========================================================================== -->
+    <section class="compare-section" id="compare">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Price Transparency</span>
+          <h2 class="section-title">Compare Medicine Prices Across Pharmacies</h2>
+          <p class="section-subtitle">
+            See side-by-side listed rates, spot the lowest reported price for identical pack sizes, and see potential cost differences.
+          </p>
+        </div>
+
+        <div class="compare-card-container">
+          <!-- Selection & Savings Banner -->
+          <div class="compare-controls-row">
+            <div class="compare-select-wrap">
+              <label for="compareMedicineSelect" class="compare-select-label">Select Medicine to Compare:</label>
+              <select id="compareMedicineSelect" class="compare-select" onchange="renderPriceComparison()">
+                <!-- Populated dynamically via JS -->
+              </select>
+            </div>
+
+            <!-- Savings Banner -->
+            <div class="savings-callout-box" id="savingsCalloutBox">
+              <svg class="savings-callout-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"></path>
+                <line x1="12" y1="6" x2="12" y2="8"></line>
+                <line x1="12" y1="16" x2="12" y2="18"></line>
+              </svg>
+              <span class="savings-callout-text" id="savingsCalloutText">
+                Calculating price comparison...
+              </span>
+            </div>
+          </div>
+
+          <!-- Comparison Table -->
+          <div class="compare-table-wrapper">
+            <table class="compare-table" id="compareTable" aria-label="Medicine price comparison table">
+              <thead>
+                <tr>
+                  <th>Pharmacy Store</th>
+                  <th>Locality</th>
+                  <th>Listed Price (₹)</th>
+                  <th>Pack Size & Strength</th>
+                  <th>Stock Status</th>
+                  <th>Reported Quantity</th>
+                  <th>Last Updated</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="compareTableBody">
+                <!-- Dynamically rendered -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Price Safety & Packaging Notice -->
+          <div class="compare-notice-text">
+            ⚠️ <strong>Price Safety Notice:</strong> Price comparisons are calculated strictly for equivalent strengths and pack sizes (e.g. 1 strip of 15 tablets). Never substitute strengths or medical brands without direct guidance from your prescribing doctor or licensed pharmacist.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         MEDICINE RESTOCK ALERTS SECTION (LOCAL STORAGE)
+         ========================================================================== -->
+    <section class="alerts-section" id="alerts">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Stock Notifications</span>
+          <h2 class="section-title">Medicine Restock Alerts</h2>
+          <p class="section-subtitle">
+            Can't find a medicine in your locality? Save a browser reminder to review reported restocks when you check back.
+          </p>
+        </div>
+
+        <div class="alerts-grid">
+          <!-- Form to Add Alert -->
+          <div class="alert-form-card">
+            <h3 class="alert-form-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              Save a Restock Alert
+            </h3>
+            <p class="alert-form-desc">
+              Store a personal reminder in your browser storage for any unavailable medicine.
+            </p>
+
+            <form id="restockAlertForm" onsubmit="handleSaveAlert(event)">
+              <div class="form-group">
+                <label class="form-label" for="alertMedName">Medicine Name *</label>
+                <input type="text" id="alertMedName" class="form-input" placeholder="e.g. Paracetamol or Calpol" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="alertMedStrength">Required Strength *</label>
+                <input type="text" id="alertMedStrength" class="form-input" placeholder="e.g. 500 mg / 10 mg" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="alertLocality">Preferred Locality *</label>
+                <input type="text" id="alertLocality" class="form-input" placeholder="e.g. Indiranagar, Bengaluru" required />
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="alertTargetPrice">Target Max Price (₹, Optional)</label>
+                <input type="number" id="alertTargetPrice" class="form-input" placeholder="e.g. 35" min="1" />
+                <div class="form-help-text">We'll flag offers matching or below this budget.</div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block">
+                Save Restock Alert
+              </button>
+            </form>
+
+            <div style="margin-top: 1rem; font-size: 0.76rem; color: var(--text-muted); line-height: 1.4;">
+              ℹ️ <strong>Demonstration Note:</strong> This is a locally saved browser alert stored in your browser's <code>localStorage</code>. It does not send SMS or push notifications.
+            </div>
+          </div>
+
+          <!-- List of Saved Alerts -->
+          <div class="saved-alerts-card">
+            <div class="saved-alerts-header">
+              <h3 class="saved-alerts-title">Your Saved Alerts (<span id="savedAlertsCount">0</span>)</h3>
+              <button class="btn btn-outline btn-sm" onclick="clearAllAlerts()">Clear All</button>
+            </div>
+
+            <div class="alerts-list-container" id="savedAlertsList">
+              <!-- Dynamically populated from localStorage -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         HOW IT WORKS SECTION
+         ========================================================================== -->
+    <section class="how-it-works-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Simple Workflow</span>
+          <h2 class="section-title">How MediCheck Works</h2>
+          <p class="section-subtitle">
+            Three straightforward steps to reduce stress and locate needed medications efficiently.
+          </p>
+        </div>
+
+        <div class="steps-grid">
+          <!-- Step 1 -->
+          <div class="step-card">
+            <div class="step-number-pill">1</div>
+            <h3 class="step-title">Search for Medicine</h3>
+            <p class="step-desc">
+              Type the medicine brand name, generic salt, or category along with your preferred locality.
+            </p>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-card">
+            <div class="step-number-pill">2</div>
+            <h3 class="step-title">Compare Reported Prices & Stock</h3>
+            <p class="step-desc">
+              Examine listed rates, check reported inventory badges (In Stock / Low Stock), and see sample travel distance.
+            </p>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-card">
+            <div class="step-number-pill">3</div>
+            <h3 class="step-title">Call Pharmacy to Confirm</h3>
+            <p class="step-desc">
+              Use the provided direct phone number to confirm current counter availability before travelling.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         WHY CHOOSE MEDICHECK
+         ========================================================================== -->
+    <section class="why-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">Patient First</span>
+          <h2 class="section-title">Why Choose MediCheck?</h2>
+          <p class="section-subtitle">
+            Designed to solve common medicine availability challenges through transparent, organized local information.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <!-- Feature 1 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+            </div>
+            <h4 class="feature-title">Stock Update Timestamps</h4>
+            <p class="feature-desc">
+              Every listed medicine shows exactly when the stock and price were reported, giving you clarity on data freshness.
+            </p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+            <h4 class="feature-title">Price Transparency</h4>
+            <p class="feature-desc">
+              Compare retail rates across pharmacies to help you save on ongoing prescription and chronic care costs.
+            </p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h4 class="feature-title">Convenient Search</h4>
+            <p class="feature-desc">
+              Easily find medicines by generic formulation or well-known brand names with instant auto-suggestions.
+            </p>
+          </div>
+
+          <!-- Feature 4 -->
+          <div class="feature-card">
+            <div class="feature-icon-box">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <h4 class="feature-title">Direct Store Contact</h4>
+            <p class="feature-desc">
+              One-click phone dialing so you can verify physical medicine availability before travelling in traffic.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         ABOUT & HACKATHON CONTEXT
+         ========================================================================== -->
+    <section class="about-section" id="about">
+      <div class="container">
+        <div class="about-card">
+          <div class="about-grid">
+            <div class="about-text">
+              <span class="section-eyebrow">Project Background</span>
+              <h3>About the MediCheck Project</h3>
+              <p>
+                MediCheck was conceived as an engineering hackathon prototype to address a frequent problem in urban healthcare: the time, cost, and stress patients face visiting multiple pharmacies just to fulfill essential prescriptions.
+              </p>
+              <p>
+                By aggregating pharmacy-reported availability and pricing data into an intuitive interface, MediCheck enables patients and caregivers to make informed choices, avoid fruitless commutes, and compare costs fairly.
+              </p>
+              <div class="student-badge-box">
+                <div class="student-badge-title">🎓 Student Demonstration Project</div>
+                <div class="student-badge-desc">
+                  Developed for a 1st-Year B.Tech Hackathon. Built completely in HTML5, CSS3, and vanilla JavaScript with zero external frameworks or backend dependencies.
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Info Card -->
+            <div style="background: #f0f7ff; border: 1px solid #bfdbfe; border-radius: var(--radius-md); padding: 1.5rem; text-align: center;">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" style="margin-bottom: 0.75rem;">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+              <h4 style="font-size: 1.1rem; color: var(--navy-900); font-weight: 700; margin-bottom: 0.4rem;">Demonstration Standards</h4>
+              <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5;">
+                All sample pharmacy names, distances, prices, and stock figures are simulated for prototyping purposes and do not represent guaranteed real-time inventory.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==========================================================================
+       FOOTER WITH MANDATORY MEDICAL DISCLAIMER
+       ========================================================================== -->
+  <footer class="site-footer">
+    <div class="container">
+      
+      <!-- Mandatory Prominent Medical Disclaimer -->
+      <div class="footer-disclaimer-box" role="alert">
+        <div class="footer-disclaimer-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Important Medical & Data Disclaimer
+        </div>
+        <p class="footer-disclaimer-text">
+          Medicine prices and availability are demonstration data unless explicitly verified with the pharmacy. Stock may change at any time. Contact the pharmacy before travelling. Follow your healthcare professional’s prescription and advice.
+        </p>
+      </div>
+
+      <div class="footer-grid">
+        <!-- Col 1: Brand Info -->
+        <div>
+          <div class="footer-brand-title">Medi<span>Check</span></div>
+          <p class="footer-brand-desc">
+            Find. Compare. Save. Making affordable healthcare information accessible for everyone.
+          </p>
+          <div style="font-size: 0.78rem; color: #94a3b8;">
+            Version 1.0 (Hackathon Edition)
+          </div>
+        </div>
+
+        <!-- Col 2: Navigation Links -->
+        <div>
+          <h4 class="footer-heading">Quick Links</h4>
+          <ul class="footer-links">
+            <li><a href="#home" class="footer-link">Home</a></li>
+            <li><a href="#availability" class="footer-link">Check Availability</a></li>
+            <li><a href="#compare" class="footer-link">Price Comparison</a></li>
+            <li><a href="#alerts" class="footer-link">Medicine Restock Alerts</a></li>
+            <li><a href="#about" class="footer-link">About Project</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 3: Popular Medicines -->
+        <div>
+          <h4 class="footer-heading">Demo Medicines</h4>
+          <ul class="footer-links">
+            <li><a href="javascript:void(0)" onclick="quickSearch('Paracetamol 500 mg')" class="footer-link">Paracetamol 500 mg</a></li>
+            <li><a href="javascript:void(0)" onclick="quickSearch('Cetirizine 10 mg')" class="footer-link">Cetirizine 10 mg</a></li>
+            <li><a href="javascript:void(0)" onclick="quickSearch('ORS')" class="footer-link">ORS Sachets</a></li>
+            <li><a href="javascript:void(0)" onclick="quickSearch('Vitamin C')" class="footer-link">Vitamin C Chewable</a></li>
+            <li><a href="javascript:void(0)" onclick="quickSearch('Ibuprofen 200 mg')" class="footer-link">Ibuprofen 200 mg</a></li>
+          </ul>
+        </div>
+
+        <!-- Col 4: Demo Support -->
+        <div>
+          <h4 class="footer-heading">Demonstration</h4>
+          <p style="font-size: 0.82rem; color: #94a3b8; line-height: 1.5; margin-bottom: 0.8rem;">
+            This web application runs locally in your browser with vanilla JavaScript. No external server or API keys required.
+          </p>
+          <button class="btn btn-outline btn-sm" style="color: #ffffff; border-color: #475569;" onclick="openAuthModal('signup')">
+            Demo Portal Access
+          </button>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div>
+          &copy; 2026 MediCheck Project. Built for 1st-Year B.Tech Hackathon.
+        </div>
+        <div>
+          Designed for Paired Pair-Programming &amp; Healthcare Accessibility
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==========================================================================
+       MODAL 1: PHARMACY DETAILS MODAL
+       ========================================================================== -->
+  <div class="modal-backdrop" id="pharmacyModalBackdrop" onclick="handleBackdropClick(event, 'pharmacyModalBackdrop')" role="dialog" aria-modal="true" aria-labelledby="pharmacyModalTitle">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 class="modal-title" id="pharmacyModalTitle">Pharmacy Details</h3>
+        <button class="modal-close-btn" onclick="closeModal('pharmacyModalBackdrop')" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body" id="pharmacyModalBody">
+        <!-- Dynamically populated via JS -->
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('pharmacyModalBackdrop')">Close</button>
+        <a id="pharmacyModalCallBtn" href="tel:" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+          </svg>
+          Call Pharmacy
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: DEMO AUTHENTICATION MODAL (LOGIN / SIGN UP)
+       ========================================================================== -->
+  <div class="modal-backdrop" id="authModalBackdrop" onclick="handleBackdropClick(event, 'authModalBackdrop')" role="dialog" aria-modal="true" aria-labelledby="authModalTitle">
+    <div class="modal-window" style="max-width: 440px;">
+      <div class="modal-header">
+        <h3 class="modal-title" id="authModalTitle">MediCheck Account</h3>
+        <button class="modal-close-btn" onclick="closeModal('authModalBackdrop')" aria-label="Close modal">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Auth Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab-btn active" id="tabLoginBtn" onclick="switchAuthTab('login')">Log In</button>
+          <button class="auth-tab-btn" id="tabSignupBtn" onclick="switchAuthTab('signup')">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginDemoForm" onsubmit="handleDemoAuth(event, 'login')">
+          <div class="form-group">
+            <label class="form-label" for="loginEmail">Email Address or Phone</label>
+            <input type="text" id="loginEmail" class="form-input" placeholder="e.g. user@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="loginPassword">Password</label>
+            <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Log In (Demo)</button>
+        </form>
+
+        <!-- Sign Up Form (hidden by default) -->
+        <form id="signupDemoForm" style="display: none;" onsubmit="handleDemoAuth(event, 'signup')">
+          <div class="form-group">
+            <label class="form-label" for="signupName">Full Name</label>
+            <input type="text" id="signupName" class="form-input" placeholder="e.g. Rahul Sharma" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signupEmail">Email Address</label>
+            <input type="email" id="signupEmail" class="form-input" placeholder="e.g. rahul@example.com" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signupLocality">Your City / Locality</label>
+            <input type="text" id="signupLocality" class="form-input" placeholder="e.g. Indiranagar, Bengaluru" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="signupPassword">Password</label>
+            <input type="password" id="signupPassword" class="form-input" placeholder="••••••••" required />
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Create Free Demo Account</button>
+        </form>
+
+        <div style="margin-top: 1rem; font-size: 0.78rem; color: var(--text-muted); text-align: center; line-height: 1.4;">
+          Note: This is a front-end simulation for project evaluation. No private information is sent to any remote server.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Floating Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ==========================================================================
+       VANILLA JAVASCRIPT LOGIC
+       Designed for 1st-year college student clarity with extensive comments
+       ========================================================================== -->
+  <script>
+    /* ==========================================================================
+       SECTION 1: LOCAL SAMPLE DATASET
+       ==========================================================================
+       Here we store mock data for 8 sample medicines and 6 fictional pharmacies.
+       In a production application, this would come from a database via an API.
+       For this hackathon project, we keep everything local and self-contained.
+    */
+
+    // 8 Sample Medicines
+    const sampleMedicines = [
+      {
+        id: 'med-1',
+        name: 'Paracetamol',
+        strength: '500 mg',
+        brand: 'Dolo / Calpol 500',
+        category: 'Fever & Pain Relief',
+        packSize: 'Strip of 15 tablets',
+        description: 'Common analgesic and antipyretic medicine for fever and headache relief.'
+      },
+      {
+        id: 'med-2',
+        name: 'Cetirizine',
+        strength: '10 mg',
+        brand: 'Cetzine / Alerid',
+        category: 'Allergy & Cold',
+        packSize: 'Strip of 10 tablets',
+        description: 'Antihistamine used to relieve allergy symptoms like runny nose, sneezing, and hives.'
+      },
+      {
+        id: 'med-3',
+        name: 'ORS Sachet (WHO Formula)',
+        strength: '21.8 g',
+        brand: 'Electral Sachet',
+        category: 'Rehydration & Digestion',
+        packSize: '1 Sachet (21.8g powder)',
+        description: 'Oral Rehydration Salts recommended to prevent and restore dehydration.'
+      },
+      {
+        id: 'med-4',
+        name: 'Vitamin C Chewable',
+        strength: '500 mg',
+        brand: 'Limcee / Celin 500',
+        category: 'Vitamins & Supplements',
+        packSize: 'Strip of 15 chewable tablets',
+        description: 'Ascorbic acid dietary supplement that supports natural immune health and wound healing.'
+      },
+      {
+        id: 'med-5',
+        name: 'Antacid Chewable',
+        strength: 'Standard Antacid',
+        brand: 'Digene / Gelusil',
+        category: 'Rehydration & Digestion',
+        packSize: 'Strip of 15 tablets',
+        description: 'Fast-acting relief from acidity, indigestion, heartburn, and stomach gas.'
+      },
+      {
+        id: 'med-6',
+        name: 'Ibuprofen',
+        strength: '200 mg',
+        brand: 'Brufen 200 / Ibugesic',
+        category: 'Fever & Pain Relief',
+        packSize: 'Strip of 10 tablets',
+        description: 'Non-steroidal anti-inflammatory medication (NSAID) for muscle pain and swelling.'
+      },
+      {
+        id: 'med-7',
+        name: 'Povidone Iodine Antiseptic',
+        strength: '5% w/v',
+        brand: 'Betadine Solution',
+        category: 'First Aid & Antiseptics',
+        packSize: '100 ml bottle',
+        description: 'Topical microbicidal antiseptic solution for minor cuts, scrapes, and burns.'
+      },
+      {
+        id: 'med-8',
+        name: 'Daily Multivitamin with Zinc',
+        strength: 'Daily Multi',
+        brand: 'Becadexamin / Becosules Z',
+        category: 'Vitamins & Supplements',
+        packSize: 'Strip of 30 capsules',
+        description: 'Essential multivitamin and mineral formulation with B-complex and Zinc.'
+      }
+    ];
+
+    // 6 Fictional Participating Pharmacies
+    const samplePharmacies = [
+      {
+        id: 'pharm-1',
+        name: 'Apollo Meds (Demo Store)',
+        locality: 'Indiranagar',
+        address: '100 Feet Road, 12th Main, Indiranagar, Bengaluru - 560038',
+        phone: '+91 98450 12345',
+        hours: '8:00 AM - 11:00 PM',
+        baseDistanceKm: 1.2
+      },
+      {
+        id: 'pharm-2',
+        name: 'Sanjeevani Care Chemist',
+        locality: 'Koramangala',
+        address: '80 Feet Road, 4th Block, Koramangala, Bengaluru - 560034',
+        phone: '+91 98450 23456',
+        hours: 'Open 24 Hours',
+        baseDistanceKm: 2.8
+      },
+      {
+        id: 'pharm-3',
+        name: 'MedPlus Express (Demo)',
+        locality: 'HSR Layout',
+        address: 'Sector 2, 27th Main Road, HSR Layout, Bengaluru - 560102',
+        phone: '+91 98450 34567',
+        hours: '7:30 AM - 10:30 PM',
+        baseDistanceKm: 3.5
+      },
+      {
+        id: 'pharm-4',
+        name: 'Wellness Forever 24/7',
+        locality: 'Jayanagar',
+        address: '11th Main, 4th Block, Jayanagar, Bengaluru - 560011',
+        phone: '+91 98450 45678',
+        hours: 'Open 24 Hours',
+        baseDistanceKm: 4.1
+      },
+      {
+        id: 'pharm-5',
+        name: 'City Life Medical Store',
+        locality: 'Whitefield',
+        address: 'ITPL Main Road, Opp. Tech Park, Whitefield, Bengaluru - 560066',
+        phone: '+91 98450 56789',
+        hours: '9:00 AM - 10:00 PM',
+        baseDistanceKm: 6.8
+      },
+      {
+        id: 'pharm-6',
+        name: 'Janata Affordable Pharmacy',
+        locality: 'Malleshwaram',
+        address: '8th Cross, Sampige Road, Malleshwaram, Bengaluru - 560003',
+        phone: '+91 98450 67890',
+        hours: '8:30 AM - 9:30 PM',
+        baseDistanceKm: 5.4
+      }
+    ];
+
+    // Pharmacy Stock & Price Offerings
+    // Links each medicine to pharmacies with realistic price differences and stock states
+    const sampleInventory = [
+      // Paracetamol 500 mg offers
+      {
+        medId: 'med-1',
+        pharmacyId: 'pharm-1',
+        price: 30,
+        stockStatus: 'In Stock',
+        quantity: '42 strips',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-1',
+        pharmacyId: 'pharm-2',
+        price: 28,
+        stockStatus: 'In Stock',
+        quantity: '60 strips',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-1',
+        pharmacyId: 'pharm-3',
+        price: 32,
+        stockStatus: 'Low Stock',
+        quantity: '6 strips remaining',
+        lastUpdated: 'Yesterday at 06:15 PM'
+      },
+      {
+        medId: 'med-1',
+        pharmacyId: 'pharm-4',
+        price: 34,
+        stockStatus: 'In Stock',
+        quantity: '55 strips',
+        lastUpdated: 'Today at 08:00 AM'
+      },
+      {
+        medId: 'med-1',
+        pharmacyId: 'pharm-6',
+        price: 22,
+        stockStatus: 'In Stock',
+        quantity: '85 strips',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+      {
+        medId: 'med-1',
+        pharmacyId: 'pharm-5',
+        price: 30,
+        stockStatus: 'Out of Stock',
+        quantity: '0 strips (Awaiting Restock)',
+        lastUpdated: 'Yesterday at 04:30 PM'
+      },
+
+      // Cetirizine 10 mg offers
+      {
+        medId: 'med-2',
+        pharmacyId: 'pharm-1',
+        price: 22,
+        stockStatus: 'Low Stock',
+        quantity: '5 strips remaining',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-2',
+        pharmacyId: 'pharm-2',
+        price: 19,
+        stockStatus: 'In Stock',
+        quantity: '34 strips',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-2',
+        pharmacyId: 'pharm-3',
+        price: 20,
+        stockStatus: 'In Stock',
+        quantity: '25 strips',
+        lastUpdated: 'Yesterday at 06:15 PM'
+      },
+      {
+        medId: 'med-2',
+        pharmacyId: 'pharm-6',
+        price: 15,
+        stockStatus: 'In Stock',
+        quantity: '50 strips',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+      {
+        medId: 'med-2',
+        pharmacyId: 'pharm-5',
+        price: 24,
+        stockStatus: 'In Stock',
+        quantity: '18 strips',
+        lastUpdated: '2 days ago'
+      },
+      {
+        medId: 'med-2',
+        pharmacyId: 'pharm-4',
+        price: 22,
+        stockStatus: 'Out of Stock',
+        quantity: '0 strips',
+        lastUpdated: 'Yesterday at 08:20 PM'
+      },
+
+      // ORS Sachet offers
+      {
+        medId: 'med-3',
+        pharmacyId: 'pharm-1',
+        price: 22,
+        stockStatus: 'In Stock',
+        quantity: '50 sachets',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-3',
+        pharmacyId: 'pharm-2',
+        price: 21,
+        stockStatus: 'In Stock',
+        quantity: '80 sachets',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-3',
+        pharmacyId: 'pharm-3',
+        price: 22,
+        stockStatus: 'In Stock',
+        quantity: '35 sachets',
+        lastUpdated: 'Yesterday at 06:15 PM'
+      },
+      {
+        medId: 'med-3',
+        pharmacyId: 'pharm-4',
+        price: 23,
+        stockStatus: 'In Stock',
+        quantity: '60 sachets',
+        lastUpdated: 'Today at 08:00 AM'
+      },
+      {
+        medId: 'med-3',
+        pharmacyId: 'pharm-6',
+        price: 19,
+        stockStatus: 'In Stock',
+        quantity: '100 sachets',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+
+      // Vitamin C Chewable offers
+      {
+        medId: 'med-4',
+        pharmacyId: 'pharm-1',
+        price: 36,
+        stockStatus: 'In Stock',
+        quantity: '28 strips',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-4',
+        pharmacyId: 'pharm-2',
+        price: 32,
+        stockStatus: 'In Stock',
+        quantity: '40 strips',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-4',
+        pharmacyId: 'pharm-4',
+        price: 35,
+        stockStatus: 'Low Stock',
+        quantity: '4 strips',
+        lastUpdated: 'Today at 08:00 AM'
+      },
+      {
+        medId: 'med-4',
+        pharmacyId: 'pharm-6',
+        price: 28,
+        stockStatus: 'In Stock',
+        quantity: '45 strips',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+      {
+        medId: 'med-4',
+        pharmacyId: 'pharm-5',
+        price: 34,
+        stockStatus: 'Out of Stock',
+        quantity: '0 strips',
+        lastUpdated: 'Yesterday at 05:00 PM'
+      },
+
+      // Antacid Chewable offers
+      {
+        medId: 'med-5',
+        pharmacyId: 'pharm-1',
+        price: 25,
+        stockStatus: 'In Stock',
+        quantity: '38 strips',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-5',
+        pharmacyId: 'pharm-2',
+        price: 24,
+        stockStatus: 'In Stock',
+        quantity: '45 strips',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-5',
+        pharmacyId: 'pharm-3',
+        price: 26,
+        stockStatus: 'In Stock',
+        quantity: '20 strips',
+        lastUpdated: 'Yesterday at 06:15 PM'
+      },
+      {
+        medId: 'med-5',
+        pharmacyId: 'pharm-6',
+        price: 20,
+        stockStatus: 'In Stock',
+        quantity: '60 strips',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+
+      // Ibuprofen 200 mg offers
+      {
+        medId: 'med-6',
+        pharmacyId: 'pharm-1',
+        price: 18,
+        stockStatus: 'In Stock',
+        quantity: '22 strips',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-6',
+        pharmacyId: 'pharm-2',
+        price: 16,
+        stockStatus: 'In Stock',
+        quantity: '30 strips',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-6',
+        pharmacyId: 'pharm-3',
+        price: 18,
+        stockStatus: 'Low Stock',
+        quantity: '3 strips',
+        lastUpdated: 'Yesterday at 06:15 PM'
+      },
+      {
+        medId: 'med-6',
+        pharmacyId: 'pharm-5',
+        price: 19,
+        stockStatus: 'In Stock',
+        quantity: '15 strips',
+        lastUpdated: 'Today at 11:00 AM'
+      },
+      {
+        medId: 'med-6',
+        pharmacyId: 'pharm-6',
+        price: 14,
+        stockStatus: 'In Stock',
+        quantity: '40 strips',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+
+      // Povidone Iodine Antiseptic Solution
+      {
+        medId: 'med-7',
+        pharmacyId: 'pharm-1',
+        price: 75,
+        stockStatus: 'In Stock',
+        quantity: '15 bottles',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-7',
+        pharmacyId: 'pharm-2',
+        price: 70,
+        stockStatus: 'In Stock',
+        quantity: '20 bottles',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-7',
+        pharmacyId: 'pharm-4',
+        price: 72,
+        stockStatus: 'In Stock',
+        quantity: '18 bottles',
+        lastUpdated: 'Today at 08:00 AM'
+      },
+      {
+        medId: 'med-7',
+        pharmacyId: 'pharm-6',
+        price: 64,
+        stockStatus: 'In Stock',
+        quantity: '25 bottles',
+        lastUpdated: 'Today at 10:30 AM'
+      },
+      {
+        medId: 'med-7',
+        pharmacyId: 'pharm-3',
+        price: 75,
+        stockStatus: 'Out of Stock',
+        quantity: '0 bottles',
+        lastUpdated: '2 days ago'
+      },
+
+      // Daily Multivitamin with Zinc
+      {
+        medId: 'med-8',
+        pharmacyId: 'pharm-1',
+        price: 48,
+        stockStatus: 'In Stock',
+        quantity: '30 strips',
+        lastUpdated: 'Today at 10:15 AM'
+      },
+      {
+        medId: 'med-8',
+        pharmacyId: 'pharm-2',
+        price: 44,
+        stockStatus: 'In Stock',
+        quantity: '45 strips',
+        lastUpdated: 'Today at 09:40 AM'
+      },
+      {
+        medId: 'med-8',
+        pharmacyId: 'pharm-3',
+        price: 46,
+        stockStatus: 'In Stock',
+        quantity: '20 strips',
+        lastUpdated: 'Yesterday at 06:15 PM'
+      },
+      {
+        medId: 'med-8',
+        pharmacyId: 'pharm-5',
+        price: 50,
+        stockStatus: 'Low Stock',
+        quantity: '2 strips remaining',
+        lastUpdated: 'Yesterday at 02:00 PM'
+      },
+      {
+        medId: 'med-8',
+        pharmacyId: 'pharm-6',
+        price: 39,
+        stockStatus: 'In Stock',
+        quantity: '55 strips',
+        lastUpdated: 'Today at 10:30 AM'
+      }
+    ];
+
+    /* ==========================================================================
+       SECTION 2: GLOBAL STATE MANAGEMENT
+       ========================================================================== */
+    // Keeps track of user search queries and filter inputs
+    const appState = {
+      searchQuery: '',
+      userLocality: '',
+      activeStockFilters: {
+        'In Stock': true,
+        'Low Stock': true,
+        'Out of Stock': true
+      },
+      minPrice: null,
+      maxPrice: null,
+      selectedCategory: 'all',
+      selectedPharmacy: 'all',
+      selectedLocality: 'all',
+      selectedMaxDistance: 'all',
+      sortBy: 'price-asc',
+      selectedCompareMedId: 'med-1'
+    };
+
+    /* ==========================================================================
+       SECTION 3: INITIALIZATION ON PAGE LOAD
+       ========================================================================== */
+    document.addEventListener('DOMContentLoaded', function() {
+      // 1. Populate dropdown filters
+      populateFilterDropdowns();
+
+      // 2. Populate comparison dropdown
+      populateCompareMedicineSelect();
+
+      // 3. Render initial results (all offerings)
+      applyFiltersAndRender();
+
+      // 4. Render initial price comparison table
+      renderPriceComparison();
+
+      // 5. Load restock alerts from localStorage
+      loadSavedAlerts();
+
+      // 6. Setup auto-complete search listeners
+      setupSearchAutocomplete();
+
+      // 7. Setup keyboard listeners (Escape key closes open modals)
+      setupKeyboardShortcuts();
+    });
+
+    /* ==========================================================================
+       SECTION 4: FILTER DROPDOWNS POPULATION
+       ========================================================================== */
+    function populateFilterDropdowns() {
+      const pharmacySelect = document.getElementById('pharmacyFilterSelect');
+      const localitySelect = document.getElementById('localityFilterSelect');
+
+      // Add unique pharmacies to pharmacy filter dropdown
+      samplePharmacies.forEach(function(pharm) {
+        const option = document.createElement('option');
+        option.value = pharm.id;
+        option.textContent = pharm.name;
+        pharmacySelect.appendChild(option);
+      });
+
+      // Collect unique localities
+      const uniqueLocalities = Array.from(new Set(samplePharmacies.map(p => p.locality)));
+      uniqueLocalities.forEach(function(loc) {
+        const option = document.createElement('option');
+        option.value = loc;
+        option.textContent = loc;
+        localitySelect.appendChild(option);
+      });
+    }
+
+    function populateCompareMedicineSelect() {
+      const select = document.getElementById('compareMedicineSelect');
+      select.innerHTML = '';
+
+      sampleMedicines.forEach(function(med) {
+        const option = document.createElement('option');
+        option.value = med.id;
+        option.textContent = `${med.name} (${med.strength}) — ${med.packSize}`;
+        select.appendChild(option);
+      });
+
+      select.value = appState.selectedCompareMedId;
+    }
+
+    /* ==========================================================================
+       SECTION 5: SEARCH & AUTOCOMPLETE ENGINE
+       ========================================================================== */
+    function setupSearchAutocomplete() {
+      const input = document.getElementById('medicineSearchInput');
+      const dropdown = document.getElementById('searchSuggestionsList');
+
+      input.addEventListener('input', function() {
+        const query = input.value.trim().toLowerCase();
+        if (query.length < 1) {
+          dropdown.style.display = 'none';
+          dropdown.innerHTML = '';
+          return;
+        }
+
+        // Match medicines by name, brand, or category
+        const matches = sampleMedicines.filter(function(med) {
+          return med.name.toLowerCase().includes(query) ||
+                 med.brand.toLowerCase().includes(query) ||
+                 med.category.toLowerCase().includes(query) ||
+                 med.strength.toLowerCase().includes(query);
+        });
+
+        if (matches.length === 0) {
+          dropdown.innerHTML = `<div class="autocomplete-item"><span class="autocomplete-item-meta">No matching medicines found in sample dataset</span></div>`;
+          dropdown.style.display = 'block';
+          return;
+        }
+
+        dropdown.innerHTML = '';
+        matches.forEach(function(med) {
+          const item = document.createElement('div');
+          item.className = 'autocomplete-item';
+          item.innerHTML = `
+            <div>
+              <div class="autocomplete-item-title">${med.name} <small style="color:var(--primary)">${med.strength}</small></div>
+              <div class="autocomplete-item-meta">Brand: ${med.brand} • ${med.category}</div>
+            </div>
+            <span style="font-size: 0.72rem; color: var(--primary); font-weight: 600;">Select</span>
+          `;
+          item.addEventListener('click', function() {
+            input.value = `${med.name} ${med.strength}`;
+            dropdown.style.display = 'none';
+            appState.searchQuery = med.name.toLowerCase();
+            applyFiltersAndRender();
+            scrollToSection('availability');
+          });
+          dropdown.appendChild(item);
+        });
+
+        dropdown.style.display = 'block';
+      });
+
+      // Hide dropdown if clicked outside
+      document.addEventListener('click', function(e) {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+          dropdown.style.display = 'none';
+        }
+      });
+    }
+
+    // Handles form submission from Hero Search
+    function handleHeroSearch(event) {
+      if (event) event.preventDefault();
+      const medInput = document.getElementById('medicineSearchInput');
+      const locInput = document.getElementById('locationSearchInput');
+
+      appState.searchQuery = medInput.value.trim().toLowerCase();
+      appState.userLocality = locInput.value.trim().toLowerCase();
+
+      document.getElementById('searchSuggestionsList').style.display = 'none';
+
+      applyFiltersAndRender();
+      scrollToSection('availability');
+
+      if (appState.searchQuery) {
+        showToast(`Searching for "${medInput.value.trim()}"`);
+      }
+    }
+
+    // Quick search trigger for popular tags
+    function quickSearch(searchTerm) {
+      const input = document.getElementById('medicineSearchInput');
+      input.value = searchTerm;
+      appState.searchQuery = searchTerm.toLowerCase();
+      applyFiltersAndRender();
+      scrollToSection('availability');
+      showToast(`Showing results for ${searchTerm}`);
+    }
+
+    /* ==========================================================================
+       SECTION 6: FILTER & SORT LOGIC
+       ========================================================================== */
+    function applyFiltersAndRender() {
+      // 1. Read stock status checkboxes
+      appState.activeStockFilters['In Stock'] = document.getElementById('filterInStock').checked;
+      appState.activeStockFilters['Low Stock'] = document.getElementById('filterLowStock').checked;
+      appState.activeStockFilters['Out of Stock'] = document.getElementById('filterOutOfStock').checked;
+
+      // 2. Read price inputs
+      const minVal = parseFloat(document.getElementById('minPriceInput').value);
+      const maxVal = parseFloat(document.getElementById('maxPriceInput').value);
+      appState.minPrice = isNaN(minVal) ? null : minVal;
+      appState.maxPrice = isNaN(maxVal) ? null : maxVal;
+
+      // 3. Read dropdown filters
+      appState.selectedCategory = document.getElementById('categoryFilterSelect').value;
+      appState.selectedPharmacy = document.getElementById('pharmacyFilterSelect').value;
+      appState.selectedLocality = document.getElementById('localityFilterSelect').value;
+      appState.selectedMaxDistance = document.getElementById('distanceFilterSelect').value;
+
+      // 4. Read sort control
+      appState.sortBy = document.getElementById('sortBySelect').value;
+
+      // 5. Combine and filter inventory data
+      const filteredResults = [];
+
+      sampleInventory.forEach(function(item) {
+        const med = sampleMedicines.find(m => m.id === item.medId);
+        const pharm = samplePharmacies.find(p => p.id === item.pharmacyId);
+
+        if (!med || !pharm) return;
+
+        // Search Query filter (matches medicine name, brand, strength, or category)
+        if (appState.searchQuery) {
+          const combinedSearchTarget = `${med.name} ${med.brand} ${med.strength} ${med.category}`.toLowerCase();
+          if (!combinedSearchTarget.includes(appState.searchQuery)) {
+            return;
+          }
+        }
+
+        // Location query filter from hero input
+        if (appState.userLocality) {
+          const locTarget = `${pharm.locality} ${pharm.address}`.toLowerCase();
+          if (!locTarget.includes(appState.userLocality)) {
+            // Also check locality dropdown if specified
+          }
+        }
+
+        // Stock status checkbox filter
+        if (!appState.activeStockFilters[item.stockStatus]) {
+          return;
+        }
+
+        // Min price filter
+        if (appState.minPrice !== null && item.price < appState.minPrice) {
+          return;
+        }
+
+        // Max price filter
+        if (appState.maxPrice !== null && item.price > appState.maxPrice) {
+          return;
+        }
+
+        // Category filter
+        if (appState.selectedCategory !== 'all' && med.category !== appState.selectedCategory) {
+          return;
+        }
+
+        // Pharmacy dropdown filter
+        if (appState.selectedPharmacy !== 'all' && pharm.id !== appState.selectedPharmacy) {
+          return;
+        }
+
+        // Locality dropdown filter
+        if (appState.selectedLocality !== 'all' && pharm.locality !== appState.selectedLocality) {
+          return;
+        }
+
+        // Max sample distance filter
+        if (appState.selectedMaxDistance !== 'all') {
+          const maxDist = parseFloat(appState.selectedMaxDistance);
+          if (pharm.baseDistanceKm > maxDist) {
+            return;
+          }
+        }
+
+        // Passed all filters!
+        filteredResults.push({
+          inventory: item,
+          medicine: med,
+          pharmacy: pharm
+        });
+      });
+
+      // 6. Sort results
+      sortResultsList(filteredResults, appState.sortBy);
+
+      // 7. Render result cards to DOM
+      renderResultsList(filteredResults);
+    }
+
+    // Helper to sort results
+    function sortResultsList(list, sortCriterion) {
+      if (sortCriterion === 'price-asc') {
+        list.sort((a, b) => a.inventory.price - b.inventory.price);
+      } else if (sortCriterion === 'price-desc') {
+        list.sort((a, b) => b.inventory.price - a.inventory.price);
+      } else if (sortCriterion === 'dist-asc') {
+        list.sort((a, b) => a.pharmacy.baseDistanceKm - b.pharmacy.baseDistanceKm);
+      } else if (sortCriterion === 'updated') {
+        // Simple recency mock sorting (Today comes before Yesterday)
+        list.sort((a, b) => {
+          if (a.inventory.lastUpdated.includes('Today') && !b.inventory.lastUpdated.includes('Today')) return -1;
+          if (!a.inventory.lastUpdated.includes('Today') && b.inventory.lastUpdated.includes('Today')) return 1;
+          return 0;
+        });
+      }
+    }
+
+    // Helper to clear and reset all filters
+    function resetAllFilters() {
+      document.getElementById('filterInStock').checked = true;
+      document.getElementById('filterLowStock').checked = true;
+      document.getElementById('filterOutOfStock').checked = true;
+      document.getElementById('minPriceInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
+      document.getElementById('categoryFilterSelect').value = 'all';
+      document.getElementById('pharmacyFilterSelect').value = 'all';
+      document.getElementById('localityFilterSelect').value = 'all';
+      document.getElementById('distanceFilterSelect').value = 'all';
+      document.getElementById('medicineSearchInput').value = '';
+      document.getElementById('locationSearchInput').value = '';
+      document.getElementById('sortBySelect').value = 'price-asc';
+
+      appState.searchQuery = '';
+      appState.userLocality = '';
+
+      applyFiltersAndRender();
+      showToast('Filters cleared');
+    }
+
+    /* ==========================================================================
+       SECTION 7: RESULTS LIST DOM RENDERING
+       ========================================================================== */
+    function renderResultsList(results) {
+      const container = document.getElementById('resultsCardsList');
+      const heading = document.getElementById('resultsHeadingText');
+
+      // Update heading text
+      if (appState.searchQuery) {
+        heading.innerHTML = `Pharmacies listing <span>"${escapeHtml(appState.searchQuery)}"</span> (${results.length} offers)`;
+      } else {
+        heading.innerHTML = `Pharmacies listing available medicines (${results.length} offers)`;
+      }
+
+      container.innerHTML = '';
+
+      // If no results match criteria, render helpful empty state
+      if (results.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state-card">
+            <div class="empty-state-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                <line x1="8" y1="11" x2="14" y2="11"></line>
+              </svg>
+            </div>
+            <div class="empty-state-title">No matching medicines found</div>
+            <p class="empty-state-desc">
+              We couldn't find any pharmacy listings matching your current search or filter combination in the sample dataset.
+            </p>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem;">
+              <button class="btn btn-outline btn-sm" onclick="resetAllFilters()">Clear All Filters</button>
+              <button class="btn btn-primary btn-sm" onclick="scrollToSection('alerts')">Save a Restock Alert</button>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      // Render cards
+      results.forEach(function(item) {
+        const inv = item.inventory;
+        const med = item.medicine;
+        const pharm = item.pharmacy;
+
+        // Badge styling based on stock status
+        let badgeClass = 'badge-in';
+        if (inv.stockStatus === 'Low Stock') badgeClass = 'badge-low';
+        if (inv.stockStatus === 'Out of Stock') badgeClass = 'badge-out';
+
+        const card = document.createElement('article');
+        card.className = 'pharmacy-result-card';
+        card.innerHTML = `
+          <!-- Top Row: Pharmacy Name & Listed Price -->
+          <div class="card-top-row">
+            <div class="card-pharmacy-info">
+              <div class="card-pharmacy-name">${escapeHtml(pharm.name)}</div>
+              <div class="card-location-meta">
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  ${escapeHtml(pharm.locality)} (${pharm.baseDistanceKm} km away)
+                </span>
+                <span>•</span>
+                <span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                  </svg>
+                  ${escapeHtml(pharm.hours)}
+                </span>
+              </div>
+            </div>
+
+            <div class="card-price-badge-block">
+              <div class="card-price-val">₹${inv.price}</div>
+              <div class="card-price-pack">per ${escapeHtml(med.packSize)}</div>
+            </div>
+          </div>
+
+          <!-- Middle Row: Medicine Name, Pack Size & Stock Status -->
+          <div class="card-med-subbar">
+            <div class="card-med-desc">
+              <div class="med-main-name">${escapeHtml(med.name)} ${escapeHtml(med.strength)}</div>
+              <div class="med-brand-alias">Brand example: ${escapeHtml(med.brand)} • Category: ${escapeHtml(med.category)}</div>
+            </div>
+
+            <div class="card-stock-stat">
+              <span class="badge ${badgeClass}">
+                <span class="badge-pill-dot"></span>
+                ${escapeHtml(inv.stockStatus)}
+              </span>
+              <span class="reported-qty">${escapeHtml(inv.quantity)}</span>
+            </div>
+          </div>
+
+          <!-- Bottom Row: Timestamp & Action Buttons -->
+          <div class="card-bottom-bar">
+            <div class="card-timestamp-text">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 6v6l4 2"></path>
+              </svg>
+              Last reported: ${escapeHtml(inv.lastUpdated)}
+            </div>
+
+            <div class="card-actions-group">
+              <button class="btn btn-outline btn-sm" onclick="openPharmacyModal('${pharm.id}')" aria-label="View details for ${escapeHtml(pharm.name)}">
+                View Details
+              </button>
+              <button class="btn btn-outline btn-sm" onclick="jumpToCompare('${med.id}')" title="Compare this medicine price across medical stores">
+                Compare Price
+              </button>
+              <a href="tel:${pharm.phone.replace(/\\s+/g, '')}" class="btn btn-primary btn-sm" onclick="showToast('Calling ${escapeHtml(pharm.name)}...')">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                </svg>
+                Call
+              </a>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    /* ==========================================================================
+       SECTION 8: PRICE COMPARISON ENGINE
+       ========================================================================== */
+    function renderPriceComparison() {
+      const select = document.getElementById('compareMedicineSelect');
+      const medId = select.value;
+      appState.selectedCompareMedId = medId;
+
+      const selectedMed = sampleMedicines.find(m => m.id === medId);
+      if (!selectedMed) return;
+
+      // Find all offers for this exact medicine
+      const offers = sampleInventory.filter(inv => inv.medId === medId);
+      const tableBody = document.getElementById('compareTableBody');
+      const savingsBox = document.getElementById('savingsCalloutText');
+      tableBody.innerHTML = '';
+
+      if (offers.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem;">No price offers currently listed for this medicine.</td></tr>`;
+        savingsBox.textContent = 'No offers available to calculate savings.';
+        return;
+      }
+
+      // Calculate lowest and highest prices
+      const validPrices = offers.map(o => o.price);
+      const minPrice = Math.min(...validPrices);
+      const maxPrice = Math.max(...validPrices);
+      const priceDiff = maxPrice - minPrice;
+      const percentSavings = maxPrice > 0 ? Math.round((priceDiff / maxPrice) * 100) : 0;
+
+      if (priceDiff > 0) {
+        savingsBox.innerHTML = `
+          <strong>Potential Savings:</strong> Save up to <strong>₹${priceDiff} (${percentSavings}%)</strong> for <em>${escapeHtml(selectedMed.name)}</em> by purchasing at the lowest-priced participating pharmacy!
+        `;
+      } else {
+        savingsBox.textContent = `All listed pharmacies currently report the same price of ₹${minPrice} for this item.`;
+      }
+
+      // Sort comparison offers from lowest price to highest price
+      const sortedOffers = [...offers].sort((a, b) => a.price - b.price);
+
+      sortedOffers.forEach(function(offer) {
+        const pharm = samplePharmacies.find(p => p.id === offer.pharmacyId);
+        if (!pharm) return;
+
+        const isLowest = offer.price === minPrice && offers.length > 1;
+
+        let badgeClass = 'badge-in';
+        if (offer.stockStatus === 'Low Stock') badgeClass = 'badge-low';
+        if (offer.stockStatus === 'Out of Stock') badgeClass = 'badge-out';
+
+        const row = document.createElement('tr');
+        if (isLowest) row.className = 'is-cheapest';
+
+        row.innerHTML = `
+          <td>
+            <strong>${escapeHtml(pharm.name)}</strong>
+          </td>
+          <td>${escapeHtml(pharm.locality)}</td>
+          <td>
+            <span style="font-weight: 800; font-size: 1.05rem; color: var(--navy-900);">₹${offer.price}</span>
+            ${isLowest ? '<span class="lowest-price-tag">★ Lowest Price</span>' : ''}
+          </td>
+          <td>${escapeHtml(selectedMed.packSize)}</td>
+          <td>
+            <span class="badge ${badgeClass}">
+              <span class="badge-pill-dot"></span>
+              ${escapeHtml(offer.stockStatus)}
+            </span>
+          </td>
+          <td>${escapeHtml(offer.quantity)}</td>
+          <td style="font-size: 0.8rem; color: var(--text-muted);">${escapeHtml(offer.lastUpdated)}</td>
+          <td>
+            <button class="btn btn-outline btn-sm" onclick="openPharmacyModal('${pharm.id}')">
+              Details
+            </button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+
+    // Allows user to click "Compare Price" on any card and immediately jump to comparison
+    function jumpToCompare(medId) {
+      const select = document.getElementById('compareMedicineSelect');
+      select.value = medId;
+      renderPriceComparison();
+      scrollToSection('compare');
+      showToast('Loaded price comparison table');
+    }
+
+    /* ==========================================================================
+       SECTION 9: RESTOCK ALERTS (PERSISTED IN LOCALSTORAGE)
+       ========================================================================== */
+    const STORAGE_KEY_ALERTS = 'medicheck_saved_alerts';
+
+    function getStoredAlerts() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY_ALERTS);
+        return raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        console.error('Error reading localStorage:', e);
+        return [];
+      }
+    }
+
+    function saveStoredAlerts(alerts) {
+      try {
+        localStorage.setItem(STORAGE_KEY_ALERTS, JSON.stringify(alerts));
+      } catch (e) {
+        console.error('Error writing to localStorage:', e);
+      }
+    }
+
+    function handleSaveAlert(event) {
+      event.preventDefault();
+      const medName = document.getElementById('alertMedName').value.trim();
+      const strength = document.getElementById('alertMedStrength').value.trim();
+      const locality = document.getElementById('alertLocality').value.trim();
+      const targetPrice = document.getElementById('alertTargetPrice').value.trim();
+
+      if (!medName || !strength || !locality) {
+        alert('Please complete all required fields.');
+        return;
+      }
+
+      const newAlert = {
+        id: 'alert_' + Date.now(),
+        medName: medName,
+        strength: strength,
+        locality: locality,
+        targetPrice: targetPrice ? parseFloat(targetPrice) : null,
+        createdDate: new Date().toLocaleDateString('en-IN', {
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric'
+        })
+      };
+
+      const alerts = getStoredAlerts();
+      alerts.unshift(newAlert);
+      saveStoredAlerts(alerts);
+
+      // Reset form
+      document.getElementById('restockAlertForm').reset();
+
+      // Refresh list
+      loadSavedAlerts();
+      showToast(`Restock reminder saved for ${medName}!`);
+    }
+
+    function deleteAlert(alertId) {
+      let alerts = getStoredAlerts();
+      alerts = alerts.filter(a => a.id !== alertId);
+      saveStoredAlerts(alerts);
+      loadSavedAlerts();
+      showToast('Alert removed');
+    }
+
+    function clearAllAlerts() {
+      if (confirm('Clear all your locally saved medicine alerts?')) {
+        saveStoredAlerts([]);
+        loadSavedAlerts();
+        showToast('All alerts cleared');
+      }
+    }
+
+    function loadSavedAlerts() {
+      const alerts = getStoredAlerts();
+      const container = document.getElementById('savedAlertsList');
+      const countEl = document.getElementById('savedAlertsCount');
+
+      countEl.textContent = alerts.length;
+      container.innerHTML = '';
+
+      if (alerts.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 2rem 1rem; color: var(--text-muted); font-size: 0.88rem;">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 0.5rem; color: var(--text-light);">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <div>No restock alerts saved yet.</div>
+            <div style="font-size: 0.78rem; margin-top: 0.2rem;">Use the form to save a personal reminder for any medicine you couldn't find.</div>
+          </div>
+        `;
+        return;
+      }
+
+      alerts.forEach(function(item) {
+        const alertItem = document.createElement('div');
+        alertItem.className = 'saved-alert-item';
+        alertItem.innerHTML = `
+          <div class="alert-item-info">
+            <div class="alert-item-med">
+              ${escapeHtml(item.medName)} (${escapeHtml(item.strength)})
+            </div>
+            <div class="alert-item-meta">
+              📍 Locality: <strong>${escapeHtml(item.locality)}</strong>
+              ${item.targetPrice ? ` • Max Budget: <strong>₹${item.targetPrice}</strong>` : ''}
+              • Saved: ${escapeHtml(item.createdDate)}
+            </div>
+          </div>
+          <button class="btn-delete-alert" onclick="deleteAlert('${item.id}')" title="Delete this alert" aria-label="Delete alert">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Delete
+          </button>
+        `;
+        container.appendChild(alertItem);
+      });
+    }
+
+    /* ==========================================================================
+       SECTION 10: MODALS & USER INTERFACE
+       ========================================================================== */
+    function openPharmacyModal(pharmacyId) {
+      const pharm = samplePharmacies.find(p => p.id === pharmacyId);
+      if (!pharm) return;
+
+      const modalBody = document.getElementById('pharmacyModalBody');
+      const modalTitle = document.getElementById('pharmacyModalTitle');
+      const callBtn = document.getElementById('pharmacyModalCallBtn');
+
+      modalTitle.textContent = pharm.name;
+      callBtn.href = `tel:${pharm.phone.replace(/\\s+/g, '')}`;
+
+      // Find all medicines listed at this pharmacy
+      const pharmStock = sampleInventory.filter(inv => inv.pharmacyId === pharmacyId);
+
+      let stockListHtml = '';
+      if (pharmStock.length > 0) {
+        pharmStock.forEach(function(item) {
+          const med = sampleMedicines.find(m => m.id === item.medId);
+          if (!med) return;
+
+          let badgeClass = 'badge-in';
+          if (item.stockStatus === 'Low Stock') badgeClass = 'badge-low';
+          if (item.stockStatus === 'Out of Stock') badgeClass = 'badge-out';
+
+          stockListHtml += `
+            <div class="detail-inventory-item">
+              <div>
+                <strong style="color:var(--navy-900);">${escapeHtml(med.name)} ${escapeHtml(med.strength)}</strong>
+                <div style="font-size: 0.75rem; color: var(--text-muted);">${escapeHtml(med.packSize)} • Updated: ${escapeHtml(item.lastUpdated)}</div>
+              </div>
+              <div style="text-align: right;">
+                <div style="font-weight: 800; color: var(--navy-900);">₹${item.price}</div>
+                <span class="badge ${badgeClass}" style="font-size: 0.72rem; padding: 0.15rem 0.45rem;">${escapeHtml(item.stockStatus)}</span>
+              </div>
+            </div>
+          `;
+        });
+      } else {
+        stockListHtml = '<p style="font-size: 0.85rem; color: var(--text-muted);">No stock reports currently registered for this store.</p>';
+      }
+
+      modalBody.innerHTML = `
+        <div class="pharmacy-detail-hero">
+          <div class="pharmacy-detail-name">${escapeHtml(pharm.name)}</div>
+          <div class="pharmacy-detail-row">
+            📍 <strong>Address:</strong> ${escapeHtml(pharm.address)}
+          </div>
+          <div class="pharmacy-detail-row">
+            📞 <strong>Contact Phone:</strong> ${escapeHtml(pharm.phone)}
+          </div>
+          <div class="pharmacy-detail-row">
+            ⏰ <strong>Operating Hours:</strong> ${escapeHtml(pharm.hours)}
+          </div>
+          <div class="pharmacy-detail-row">
+            🚗 <strong>Sample Distance:</strong> ~${pharm.baseDistanceKm} km from center
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--navy-900); margin-bottom: 0.35rem;">
+          Reported Medicines & Counter Prices (${pharmStock.length})
+        </h4>
+        <div class="detail-inventory-list">
+          ${stockListHtml}
+        </div>
+
+        <div style="margin-top: 1.25rem; font-size: 0.75rem; color: var(--text-muted); line-height: 1.4; background: #f8fafc; padding: 0.6rem 0.8rem; border-radius: var(--radius-sm);">
+          ⚠️ <strong>Notice:</strong> Information displayed above is submitted by participating stores as demonstration data. Please dial the store before visiting to confirm real-time availability.
+        </div>
+      `;
+
+      document.getElementById('pharmacyModalBackdrop').classList.add('open');
+    }
+
+    function openAuthModal(tab) {
+      switchAuthTab(tab || 'login');
+      document.getElementById('authModalBackdrop').classList.add('open');
+    }
+
+    function switchAuthTab(tab) {
+      const loginForm = document.getElementById('loginDemoForm');
+      const signupForm = document.getElementById('signupDemoForm');
+      const tabLoginBtn = document.getElementById('tabLoginBtn');
+      const tabSignupBtn = document.getElementById('tabSignupBtn');
+      const title = document.getElementById('authModalTitle');
+
+      if (tab === 'signup') {
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'block';
+        tabLoginBtn.classList.remove('active');
+        tabSignupBtn.classList.add('active');
+        title.textContent = 'Join MediCheck (Demo)';
+      } else {
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+        tabLoginBtn.classList.add('active');
+        tabSignupBtn.classList.remove('active');
+        title.textContent = 'Log In to MediCheck (Demo)';
+      }
+    }
+
+    function handleDemoAuth(event, type) {
+      event.preventDefault();
+      closeModal('authModalBackdrop');
+      if (type === 'signup') {
+        showToast('🎉 Demo account created! Logged in as Patient.');
+      } else {
+        showToast('✅ Demo Login successful! Welcome back.');
+      }
+    }
+
+    function closeModal(backdropId) {
+      const modal = document.getElementById(backdropId);
+      if (modal) modal.classList.remove('open');
+    }
+
+    function handleBackdropClick(event, backdropId) {
+      if (event.target.id === backdropId) {
+        closeModal(backdropId);
+      }
+    }
+
+    function setupKeyboardShortcuts() {
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeModal('pharmacyModalBackdrop');
+          closeModal('authModalBackdrop');
+        }
+      });
+    }
+
+    function toggleMobileNav() {
+      const nav = document.getElementById('mainNavLinks');
+      nav.classList.toggle('mobile-nav-active');
+    }
+
+    function toggleMobileFilters() {
+      const sidebar = document.getElementById('filterSidebar');
+      sidebar.classList.toggle('mobile-open');
+    }
+
+    function scrollToSection(sectionId) {
+      const el = document.getElementById(sectionId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        // Close mobile nav if open
+        document.getElementById('mainNavLinks').classList.remove('mobile-nav-active');
+      }
+    }
+
+    /* ==========================================================================
+       SECTION 11: UTILITY FUNCTIONS (TOAST NOTIFICATIONS, ESCAPING)
+       ========================================================================== */
+    function showToast(message) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast-message';
+      toast.innerHTML = `
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>${escapeHtml(message)}</span>
+      `;
+      container.appendChild(toast);
+
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(function() {
+          if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+          }
+        }, 300);
+      }, 3500);
+    }
+
+    // Prevents XSS when rendering user text in innerHTML
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+  </script>
+</body>
+</html>
